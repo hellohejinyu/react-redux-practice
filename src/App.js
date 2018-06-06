@@ -6,8 +6,8 @@ class App extends Component {
   render () {
     return (
       <div>
-        <Header />
-        <Content />
+        <Header name='头部' />
+        <Content name='内容' />
       </div>
     )
   }

@@ -1,35 +1,20 @@
 import React, { Component } from 'react'
 import ThemeSwitch from './ThemeSwitch'
-import Wrap from './Wrap'
+import connect from './connect'
 
 class Content extends Component {
-  constructor() {
-    super()
-    this.state = { themeColor: '' }
-  }
-
-  componentWillMount() {
-    const { store } = this.props
-    this._updateThemeColor()
-    store.subscribe(() => this._updateThemeColor())
-  }
-
-  _updateThemeColor() {
-    const { store } = this.props
-    const state = store.getState()
-    this.setState({ themeColor: state.themeColor })
-  }
-
   render() {
     return (
       <div>
-        <p style={{ color: this.state.themeColor }}>React.js 小书内容</p>
-        <ThemeSwitch />
+        <p style={{ color: this.props.themeColor }}>React.js 小书内容</p>
+        <ThemeSwitch name='switch' />
       </div>
     )
   }
 }
 
-const WrapContent = Wrap(Content)
+const WrapContent = connect(state => ({
+  themeColor: state.themeColor
+}))(Content)
 
 export default WrapContent

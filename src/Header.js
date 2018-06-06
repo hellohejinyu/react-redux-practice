@@ -1,30 +1,16 @@
 import React, { Component } from 'react'
-import Wrap from './Wrap'
+import connect from './connect'
 
 class Header extends Component {
-  constructor () {
-    super()
-    this.state = { themeColor: '' }
-  }
-  componentWillMount() {
-    const { store } = this.props
-    this._updateThemeColor()
-    store.subscribe(() => this._updateThemeColor())
-  }
-  _updateThemeColor () {
-    const { store } = this.props
-    const state = store.getState()
-    this.setState({
-      themeColor: state.themeColor
-    })
-  }
   render () {
     return (
-      <h1 style={{ color: this.state.themeColor }}>React.js 小书</h1>
+      <h1 style={{ color: this.props.themeColor }}>React.js 小书</h1>
     )
   }
 }
 
-const WrapHeader = Wrap(Header)
+const WrapHeader = connect(state => ({
+  themeColor: state.themeColor
+}))(Header)
 
 export default WrapHeader

@@ -6,15 +6,20 @@ import registerServiceWorker from './registerServiceWorker';
 
 function createStore(reducer) {
     let state = null
-    const listeners = []
-    const subscribe = (listener) => listeners.push(listener)
+    let listeners = []
+    const subscribe = (listener, id) => {
+        listeners.push({listener, id})
+    }
+    const _unsafeRemoveSubscribe = (id) => {
+        listeners = listeners.filter(i => i.id !== id)
+    }
     const getState = () => state
     const dispatch = (action) => {
         state = reducer(state, action)
-        listeners.forEach((listener) => listener())
+        listeners.forEach((listener) => listener.listener())
     }
     dispatch({}) // 初始化 state
-    return { getState, dispatch, subscribe }
+    return { getState, dispatch, subscribe, _unsafeRemoveSubscribe }
 }
 
 const themeReducer = (state, action) => {
