@@ -1,5 +1,30 @@
 import React, { Component } from 'react'
-import { StoreContext } from './index'
+
+const StoreContext = React.createContext({})
+
+const Provider = ({ store, children }) => (
+  <StoreContext.Provider value={store}>
+    {children}
+  </StoreContext.Provider>
+)
+
+function createStore(reducer) {
+  let state = null
+  let listeners = []
+  const subscribe = (listener, id) => {
+    listeners.push({ listener, id })
+  }
+  const _unsafeRemoveSubscribe = (id) => {
+    listeners = listeners.filter(i => i.id !== id)
+  }
+  const getState = () => state
+  const dispatch = (action) => {
+    state = reducer(state, action)
+    listeners.forEach((listener) => listener.listener())
+  }
+  dispatch({}) // 初始化 state
+  return { getState, dispatch, subscribe, _unsafeRemoveSubscribe }
+}
 
 const connect = (mapStateToProps, mapDispatchToProps) => (Cpt) => {
   const res = (props) => {
@@ -7,7 +32,7 @@ const connect = (mapStateToProps, mapDispatchToProps) => (Cpt) => {
       {
         store => {
           class Connect extends Component {
-            constructor () {
+            constructor() {
               super()
               this.state = {
                 allProps: {},
@@ -24,12 +49,12 @@ const connect = (mapStateToProps, mapDispatchToProps) => (Cpt) => {
             }
 
             _updateProps() {
-              const stateProps = mapStateToProps ? 
-              mapStateToProps(store.getState(), props) :
-              {}
+              const stateProps = mapStateToProps ?
+                mapStateToProps(store.getState(), props) :
+                {}
               const dispatchProps = mapDispatchToProps ?
-              mapDispatchToProps(store.dispatch, props) :
-              {}
+                mapDispatchToProps(store.dispatch, props) :
+                {}
               this.setState({
                 allProps: {
                   ...stateProps,
@@ -38,7 +63,7 @@ const connect = (mapStateToProps, mapDispatchToProps) => (Cpt) => {
                 }
               })
             }
-            render () {
+            render() {
               return <Cpt {...this.state.allProps} />
             }
           }
@@ -51,4 +76,8 @@ const connect = (mapStateToProps, mapDispatchToProps) => (Cpt) => {
 }
 
 
-export default connect
+export {
+  connect,
+  createStore,
+  Provider
+}
