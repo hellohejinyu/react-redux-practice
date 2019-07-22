@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-import { createStore } from 'redux'
-import { Provider } from 'react-redux'
+import { createStore } from './react-redux'
+import { Provider } from './react-redux'
 
 const themeReducer = (state, action) => {
     if (!state) {
@@ -14,6 +14,8 @@ const themeReducer = (state, action) => {
     switch (action.type) {
         case 'CHANGE_COLOR':
             return { ...state, themeColor: action.themeColor }
+        case 'test':
+            return { ...state, value: new Date().getTime() }
         default:
             return state
     }

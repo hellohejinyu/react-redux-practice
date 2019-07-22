@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import shallowEqual from './shallowEqual'
 
 const StoreContext = React.createContext({})
 
@@ -35,6 +36,7 @@ const connect = (mapStateToProps, mapDispatchToProps) => (Cpt) => {
             constructor() {
               super()
               this.state = {
+                props: {},
                 allProps: {},
                 listenerId: Math.floor(Math.random() * 100000000)
               }
@@ -48,6 +50,15 @@ const connect = (mapStateToProps, mapDispatchToProps) => (Cpt) => {
               store._unsafeRemoveSubscribe(this.state.listenerId)
             }
 
+            shouldComponentUpdate() {
+              const stateProps = mapStateToProps ?
+                mapStateToProps(store.getState(), props) :
+                {}
+              const isEuqal = shallowEqual(this.state.props, stateProps)
+              // console.log(this.state.props, stateProps, isEuqal)
+              return !isEuqal
+            }
+
             _updateProps() {
               const stateProps = mapStateToProps ?
                 mapStateToProps(store.getState(), props) :
@@ -56,6 +67,7 @@ const connect = (mapStateToProps, mapDispatchToProps) => (Cpt) => {
                 mapDispatchToProps(store.dispatch, props) :
                 {}
               this.setState({
+                props: stateProps,
                 allProps: {
                   ...stateProps,
                   ...dispatchProps,

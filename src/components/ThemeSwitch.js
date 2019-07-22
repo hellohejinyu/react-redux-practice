@@ -22,6 +22,7 @@ export default class ThemeSwitch extends Component {
         <button
           style={{ color: this.props.themeColor }}
           onClick={this.handleSwitchColor.bind(this, 'blue')}>Blue</button>
+        <button onClick={this.props.onTest.bind(this)}>Test</button>
       </div>
     )
   }
