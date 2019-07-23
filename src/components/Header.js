@@ -7,7 +7,6 @@ export default class Header extends Component {
   }
 
   render () {
-    console.log('update header')
     return (
       <h1 style={{ color: this.props.themeColor }}>React.js 小书</h1>
     )

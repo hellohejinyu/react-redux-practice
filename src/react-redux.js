@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useContext, useCallback, useEffect, useState, Component } from 'react'
 import shallowEqual from './shallowEqual'
 
 const StoreContext = React.createContext({})
@@ -25,6 +25,27 @@ function createStore(reducer) {
   }
   dispatch({}) // 初始化 state
   return { getState, dispatch, subscribe, _unsafeRemoveSubscribe }
+}
+
+const useSelector = (select) => {
+  const store = useContext(StoreContext)
+  const [state, setState] = useState(select(store.getState()))
+
+  useEffect(() => {
+    const id =  Math.floor(Math.random() * 100000000)
+    store.subscribe(() => {
+      const cur = select(store.getState())
+      if (cur !== state) {
+        setState(cur)
+      }
+    }, id)
+
+    return () => {
+      store._unsafeRemoveSubscribe(id)
+    }
+  }, [state])
+  
+  return state
 }
 
 const connect = (mapStateToProps, mapDispatchToProps) => (Cpt) => {
@@ -91,5 +112,6 @@ const connect = (mapStateToProps, mapDispatchToProps) => (Cpt) => {
 export {
   connect,
   createStore,
-  Provider
+  Provider,
+  useSelector
 }
